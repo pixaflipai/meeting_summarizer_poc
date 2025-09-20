@@ -2,6 +2,10 @@ import streamlit as st
 from crewai import Crew
 from agent_factory import create_summarizer_agent, create_consultant_agent, create_report_generator_agent, create_task1, create_task2, create_task3
 from llm_setup import llm
+import os 
+
+os.environ["CREWAI_DISABLE_KNOWLEDGE"] = "true"  # example, check if CrewAI supports it
+
 
 st.set_page_config(page_title="Meeting Summarizer", layout="wide")
 st.title("Meeting Summarizer")
