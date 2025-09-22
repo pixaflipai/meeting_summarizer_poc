@@ -1,5 +1,11 @@
 import streamlit as st
-import boot_sqlite
+import sys
+import importlib
+try:
+    import pysqlite3  # wheels import under this name
+except Exception:
+    importlib.import_module("pysqlite3")
+sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 from crewai import Crew
 from agent_factory import create_summarizer_agent, create_consultant_agent, create_report_generator_agent, create_task1, create_task2, create_task3
 from llm_setup import llm
