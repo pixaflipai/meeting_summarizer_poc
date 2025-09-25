@@ -29,38 +29,40 @@ all_files=sorted(
     key=lambda p:p.stat().st_mtime,
     reverse=True
 )
+if not all_files:
+    st.warning("No transcripts found in 'transcripts_txt/'.")
+    st.stop()
 
-file=st.selectbox("Choose a meeting to summarize:",all_files)
+labels = [p.stem.replace("meeting_", "") for p in all_files]
+choice = st.selectbox("Choose a meeting to summarize:", labels, index=0)
+selected_path = all_files[labels.index(choice)]
 
 if st.button("Summarize Meeting"):
-    if not file:
-        st.error("Please upload the meeting transcript")
-    else:
-        try:
-            with st.spinner("Step 1/2: Extracting the text from uploaded file."):
-                text=file.read().decode("utf-8")
-                st.success("Text Extraction Successful !")
+    try:
+        with st.spinner("Step 1/2: Extracting the text from uploaded file."):
+            text = selected_path.read_text(encoding="utf-8")
+            st.success(f"Loaded: {selected_path.name} ")
 
-            with st.spinner("Step 2/2: The AI crew is summarizing this meeting. This may take a while."):
-                
-                summarizer_agent = create_summarizer_agent(text, llm)
-                consultant_agent = create_consultant_agent(llm)
-                report_generator_agent = create_report_generator_agent(llm)
+        with st.spinner("Step 2/2: The AI crew is summarizing this meeting. This may take a while."):
+            
+            summarizer_agent = create_summarizer_agent(text, llm)
+            consultant_agent = create_consultant_agent(llm)
+            report_generator_agent = create_report_generator_agent(llm)
 
-                task1 = create_task1(text, summarizer_agent)
-                task2 = create_task2(text, consultant_agent)
-                task3 = create_task3(task1, task2, report_generator_agent)
+            task1 = create_task1(text, summarizer_agent)
+            task2 = create_task2(text, consultant_agent)
+            task3 = create_task3(task1, task2, report_generator_agent)
 
-                crew = Crew(
-                    agents=[summarizer_agent, consultant_agent, report_generator_agent],
-                    tasks=[task1, task2, task3],
-                    verbose=True,
-                )
+            crew = Crew(
+                agents=[summarizer_agent, consultant_agent, report_generator_agent],
+                tasks=[task1, task2, task3],
+                verbose=True,
+            )
 
-                result = crew.kickoff(inputs={"text": text})
-                st.success("Summarization Complete !")
+            result = crew.kickoff(inputs={"text": text})
+            st.success("Summarization Complete !")
 
-            st.markdown(result)
+        st.markdown(result)
 
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
