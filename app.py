@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import importlib
+from pathlib import Path
 try:
     import pysqlite3  # wheels import under this name
 except Exception:
@@ -21,8 +22,15 @@ st.sidebar.info("""
                 \n
                 This process may take several minutes depending on the meeting duration.
                 """)
+TRANSCRIPTS_DIR=Path("transcripts_txt")
 
-file = st.file_uploader(label="meeting.txt")
+all_files=sorted(
+    TRANSCRIPTS_DIR.glob("meeting_*.txt"),
+    key=lambda p:p.stat().st_mtime,
+    reverse=True
+)
+
+file=st.selectbox("Choose a meeting to summarize:",all_files)
 
 if st.button("Summarize Meeting"):
     if not file:
