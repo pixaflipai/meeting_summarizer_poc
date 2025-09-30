@@ -9,7 +9,7 @@ assert API_KEY, "Set RECALLAI_API_KEY in .env"
 BASE = f"https://{REGION}.recall.ai/api/v1"
 HDRS = {"Authorization": f"Token {API_KEY}", "Content-Type": "application/json"}
 
-def req_bot(meet_url: str, bot_name: str = "SummarizerBot") -> dict:
+def req_bot(meet_url: str, bot_name: str = "Pixabot") -> dict:
     """Request a Recall bot to join the meeting."""
     payload = {
         "meeting_url": meet_url,
