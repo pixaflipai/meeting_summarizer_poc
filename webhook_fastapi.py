@@ -199,6 +199,20 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app with lifespan handler
 app = FastAPI(lifespan=lifespan)
 
+# ---------- CORS (allow React dev origin) ----------
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "*"  # keep or tighten in production
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # ---------- routes ----------
 @app.get("/health")
 def health():
