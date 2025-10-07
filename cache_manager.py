@@ -61,18 +61,18 @@ def get_summary(
 
 def save_summary(
     text: str,
-    summary: str,
+    summary,
     project: str | None = None,
     filename: str | None = None,
 ) -> str:
     """
     Save (or update) a cached summary. Backwards compatible with text-only.
+    Forces summary to string to avoid JSON serialization errors.
     """
     key = _cache_key(text, project=project, filename=filename)
     f = CACHE_DIR / f"{key}.json"
     obj = {
-        "summary": summary,
-        # FIXED: proper key name + timezone-aware timestamp
+        "summary": str(summary),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "project": project,
         "filename": filename,
