@@ -11,4 +11,4 @@ RUN mkdir -p /app/transcripts_projects /app/summary_cache
 
 EXPOSE 8000
 
-CMD ["uvicorn", "webhook_fastapi:app", "--host", "localhost", "--port", "8000"]
+CMD ["uvicorn", "webhook_fastapi:app", "--host", "0.0.0.0", "--port", "8000"]
